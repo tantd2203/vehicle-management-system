@@ -1,0 +1,282 @@
+{
+	"info": {
+		"_postman_id": "512ecf01-1662-4d1a-896f-07a62a53b657",
+		"name": "OJT KLB",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "18849620",
+		"_collection_link": "https://solar-crescent-21423.postman.co/workspace/New-Team-Workspace~aa7778e8-5561-47e1-b39e-be2c965077a1/collection/18849620-512ecf01-1662-4d1a-896f-07a62a53b657?action=share&source=collection_link&creator=18849620"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"chien\",\r\n  \"password\": \"123\",\r\n  \"phoneNumber\": \"037969187\",\r\n  \"fullName\": \"John Do1e\",\r\n  \"email\": \"chi1en@1exa1mple.com\",\r\n  \"deviceID\": \"ABC123456\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/auth/register"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if(jsonData!=null){",
+									"    pm.environment.set(\"access_token\",jsonData.data.accessToken);",
+									"    pm.environment.set(\"refresh_token\",jsonData.data.refreshToken);",
+									"}",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"chiencute\",\r\n  \"password\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/auth/login"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "vehicle",
+			"item": [
+				{
+					"name": "get-All-vehicle",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehicle/list",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicle",
+								"list"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-by-id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/vehicle/list",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicle",
+								"list"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-vehicle",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "{{baseUrl}}/vehicle/"
+					},
+					"response": []
+				},
+				{
+					"name": "delete-vehicle",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{baseUrl}}/vehicle/1"
+					},
+					"response": []
+				},
+				{
+					"name": "add-vehicle",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"make\": \"Toyota\",\n    \"model\": \"Corolla\",\n    \"year\": 2020,\n    \"type\": \"Car\",\n    \"licensePlate\": \"ABC123\",\n    \"identificationNumber\": \"1HGBH41JXMN109186\",\n    \"color\": \"Blue\",\n    \"fuelType\": \"Gasoline\",\n    \"status\": \"Active\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/vehicle"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "MaintenanceRecord",
+			"item": [
+				{
+					"name": "get-by-id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/maintenance/list",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"maintenance",
+								"list"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-Maintenance",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": "{{baseUrl}}/vehicle/"
+					},
+					"response": []
+				},
+				{
+					"name": "delete-vehicle",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{baseUrl}}/vehicle/"
+					},
+					"response": []
+				},
+				{
+					"name": "add-maintenance",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{access_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"serviceDate\": \"2023-08-07T15:30:00.000Z\",\n    \"description\": \"Oil change and filter replacement\",\n    \"cost\": 79.99,\n    \"vehicleId\": 3\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/maintenance"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "redis",
+			"item": [
+				{
+					"name": "find all",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/auth/findAll"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080"
+		}
+	]
+}

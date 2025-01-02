@@ -1,0 +1,35 @@
+services:
+
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis
+    hostname: redis
+    ports:
+      - '6379:6379'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB;FLUSHALL
+    networks:
+      - backend
+
+
+  postgresql:
+    image: postgres:16.4
+    restart: always
+    ports:
+      - '5439:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=vehicle_management_system
+      - POSTGRES_REPLICATION_USER=repl_user
+      - POSTGRES_REPLICATION_PASSWORD=repl_user
+    volumes:
+      - ./docker/postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:
+    driver: bridge

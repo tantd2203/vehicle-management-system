@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5439/vehicle_management_system
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false  # Set to 'true' to enable SQL logging
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+
+openapi:
+  service:
+    api-docs: API DOCUMENT VEHICLE MANAGEMENT SYSTEM
+    server: http://localhost:8080
+    title: DOCUMENT VEHICLE MANAGEMENT SYSTEM
+    version: 1.1.1
+jwt:
+  expiryHour: 1
+  expiryDay: 14
+  secretKey: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+
+
+
