@@ -33,6 +33,7 @@ public class SecurityConfiguration {
 
     private static final String[] WHITE_LIST_URL = {"/auth/**",
             "/actuator/**",
+            "/mail/**",
             "/redis/**",
             "/v2/api-docs",
             "/v3/api-docs",
@@ -50,7 +51,7 @@ public class SecurityConfiguration {
      * @author: TanTD1
      * @since: 06/08/2024 10:13
      * @description: encode password
-     * @update:
+
      *
      * */
     @Bean
