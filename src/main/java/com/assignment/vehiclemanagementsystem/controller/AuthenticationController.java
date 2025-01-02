@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     private final AuthenticationService service;
-    private final TokenRedisService tokenRedisService;
 
     @PostMapping(value = "/register", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseData<Long> register(
@@ -48,6 +47,7 @@ public class AuthenticationController {
 
     }
 
+
     @PostMapping(value = "/refreshToken", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseData<TokenResponse> refreshToken(
             HttpServletRequest request
@@ -57,19 +57,19 @@ public class AuthenticationController {
 
     }
 
-
-    @GetMapping(value = "/findAll", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseData<?> findAll() {
-        log.info("Fetching all tokens from Redis");
-        try {
-            Object tokens = tokenRedisService.getAllToken();
-            log.info("Fetched tokens: {}", tokens);
-            return new ResponseData<>(HttpStatus.OK.value(), Translator.toLocale("redis.user"), tokens);
-        } catch (Exception e) {
-            log.error("Error fetching tokens: {}", e.getMessage());
-            return new ResponseData<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error fetching tokens");
-        }
-    }
+//
+//    @GetMapping(value = "/findAll", produces = {MediaType.APPLICATION_JSON_VALUE})
+//    public ResponseData<?> findAll() {
+//        log.info("Fetching all tokens from Redis");
+//        try {
+//            Object tokens = tokenRedisService.getAllToken();
+//            log.info("Fetched tokens: {}", tokens);
+//            return new ResponseData<>(HttpStatus.OK.value(), Translator.toLocale("redis.user"), tokens);
+//        } catch (Exception e) {
+//            log.error("Error fetching tokens: {}", e.getMessage());
+//            return new ResponseData<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error fetching tokens");
+//        }
+//    }
 
 
 }

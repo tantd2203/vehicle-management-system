@@ -7,6 +7,8 @@ import com.assignment.vehiclemanagementsystem.payload.request.SignInRequest;
 import com.assignment.vehiclemanagementsystem.payload.respone.TokenResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.stereotype.Service;
+
 
 
 public interface AuthenticationService {

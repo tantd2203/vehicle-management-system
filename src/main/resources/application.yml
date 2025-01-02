@@ -13,10 +13,12 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
 
-  data:
-    redis:
-      host: localhost
-      port: 6379
+  redis:
+    host: localhost
+    port: 6379
+    password:
+    database: 0
+
 
 
 openapi:
@@ -30,9 +32,7 @@ jwt:
   expiryDay: 14
   secretKey: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
 
-  redis:
-    host: ${REDIS_HOST:localhost}
-    port: ${REDIS_PORT:6379}
+
 
 
 

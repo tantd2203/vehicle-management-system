@@ -1,15 +1,16 @@
 package com.assignment.vehiclemanagementsystem.service.impl;
 
 import com.assignment.vehiclemanagementsystem.constant.Role;
+import com.assignment.vehiclemanagementsystem.entity.RedisToken;
 import com.assignment.vehiclemanagementsystem.entity.User;
-import com.assignment.vehiclemanagementsystem.entity.UserSessionToken;
+import com.assignment.vehiclemanagementsystem.exection.InvalidDataException;
 import com.assignment.vehiclemanagementsystem.payload.request.RegisterRequest;
 import com.assignment.vehiclemanagementsystem.payload.request.SignInRequest;
 import com.assignment.vehiclemanagementsystem.payload.respone.TokenResponse;
 import com.assignment.vehiclemanagementsystem.repository.UserRepository;
 import com.assignment.vehiclemanagementsystem.service.AuthenticationService;
 import com.assignment.vehiclemanagementsystem.service.JWTService;
-import com.assignment.vehiclemanagementsystem.service.TokenRedisService;
+import com.assignment.vehiclemanagementsystem.service.RedisTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import static org.springframework.http.HttpHeaders.REFERER;
 
 import java.util.Optional;
 
@@ -34,8 +37,8 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
-
     private final UserRepository userRepository;
+    private final RedisTokenService redisTokenService;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
     private final PasswordEncoder passwordEncoder;
@@ -49,10 +52,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var user = userRepository.findByUsername(signInRequest.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 
+
         String accessToken = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
 
+        ;
+
+        // save token to db
+        redisTokenService.save(RedisToken.builder().id(user.getUsername()).accessToken(accessToken).refreshToken(refreshToken).build());
         return TokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -79,20 +87,44 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public TokenResponse refreshToken(HttpServletRequest request) {
-        String token = request.getHeader("x-token");
-        if (StringUtils.isBlank(token)) {
-            throw new IllegalArgumentException("Token is required");
+        log.info("---------- refreshToken ----------");
+
+        final String refreshToken = request.getHeader(REFERER);
+
+
+        if (StringUtils.isBlank(refreshToken)) {
+            throw new InvalidDataException("Token must be not blank");
         }
-        final  String userName = jwtService.extractUsername(token);
+        final String userName = jwtService.extractUsername(refreshToken);
         Optional<User> user = userRepository.findByUsername(userName);
 
-        if (!jwtService.validateToken(token, user.get())) {
+        if (!jwtService.validateToken(refreshToken, user.get())) {
             throw new IllegalArgumentException("Invalid token");
         }
+
         String accessToken = jwtService.generateToken(user.get());
+
+        redisTokenService.save(RedisToken.builder().id(user.get().getUsername()).accessToken(accessToken).refreshToken(refreshToken).build());
+
         return TokenResponse.builder()
                 .accessToken(accessToken)
-                .refreshToken(token)
+                .refreshToken(refreshToken)
                 .userId(user.get().getId()).build();
+    }
+
+
+    public String removeToken(HttpServletRequest request) {
+        log.info("---------- removeToken ----------");
+
+        final String token = request.getHeader(REFERER);
+        if (StringUtils.isBlank(token)) {
+            throw new InvalidDataException("Token must be not blank");
+        }
+
+        final String userName = jwtService.extractUsername(token);
+        // tokenService.delete(userName);
+        redisTokenService.remove(userName);
+
+        return "Removed!";
     }
 }

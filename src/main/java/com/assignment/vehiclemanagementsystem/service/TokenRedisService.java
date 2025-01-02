@@ -1,6 +1,9 @@
 package com.assignment.vehiclemanagementsystem.service;
 
+import com.assignment.vehiclemanagementsystem.entity.RedisToken;
 import com.assignment.vehiclemanagementsystem.entity.UserSessionToken;
+import com.assignment.vehiclemanagementsystem.exection.InvalidDataException;
+import com.assignment.vehiclemanagementsystem.repository.RedisTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -10,27 +13,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TokenRedisService {
 
-    private static final String HASH_KEY = "UserSessionToken";
 
+    private final RedisTokenRepository redisTokenRepository;
 
-    private final RedisTemplate redisTemplate;
-
-    public UserSessionToken saveToken(UserSessionToken userSessionToken) {
-        redisTemplate.opsForHash().put(HASH_KEY, userSessionToken.getUserId(), userSessionToken);
-        return userSessionToken;
+    public void save(RedisToken token) {
+        redisTokenRepository.save(token);
     }
 
-    public List<UserSessionToken> getAllToken() {
-        return redisTemplate.opsForHash().values(HASH_KEY);
+    public void remove(String id) {
+        isExists(id);
+        redisTokenRepository.deleteById(id);
     }
 
-    public UserSessionToken findTokenById(int id) {
-        return (UserSessionToken) redisTemplate.opsForHash().get(HASH_KEY, id);
+    public boolean isExists(String id) {
+        if (!redisTokenRepository.existsById(id)) {
+            throw new InvalidDataException("Token not exists");
+        }
+        return true;
     }
-
-    public String deleteToken(int id) {
-        redisTemplate.opsForHash().delete(HASH_KEY, id);
-        return "UserSessionToken deleted successfully!";
-    }
-
 }
