@@ -16,6 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,6 +43,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
 
     @Override
@@ -80,8 +82,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .role(Role.User)
                 .enabled(Boolean.TRUE)
                 .build();
-        userRepository.save(user);
+        var userSuccess = userRepository.save(user);
         log.info("User has added successfully, userId={}", user.getId());
+
+        if (userSuccess != null) {
+            String message = String.format("%s,%s,%s", user.getEmail(), user.getId(), ":D Register success");
+            kafkaTemplate.send("register-success-topic", message);
+        }
+
         return user.getId();
     }
 

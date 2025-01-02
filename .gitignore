@@ -35,3 +35,5 @@ build/
 docker/
 # log
 access.log
+#
+/src/main/resources/application.properties
